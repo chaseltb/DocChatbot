@@ -1,9 +1,4 @@
 import React, { useState } from "react";
-import ChatMessage from "@/components/ChatMessage";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function RAGChat() {
   const [messages, setMessages] = useState([]);
@@ -19,7 +14,7 @@ export default function RAGChat() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://your-vercel-deployment.vercel.app/query", {
+      const res = await fetch("http://localhost:8000/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: input }),
@@ -37,17 +32,15 @@ export default function RAGChat() {
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-[#f8fafc] p-4">
-      <Card className="w-full max-w-2xl flex flex-col h-[80vh] border-none bg-[#f8fafc]">
-        <CardContent className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full pr-2">
-            <div className="flex flex-col space-y-2">
-              {messages.map((msg, idx) => (
-                <ChatMessage key={idx} message={msg.message} isUser={msg.isUser} />
-              ))}
-              {loading && <ChatMessage message="Thinking..." isUser={false} />}
-            </div>
-          </ScrollArea>
-        </CardContent>
+      <div className="w-full max-w-2xl flex flex-col h-[80vh] bg-white shadow-md rounded-3xl overflow-hidden">
+        <div className="flex-1 overflow-hidden p-4">
+          <div className="h-full overflow-y-auto pr-2 flex flex-col space-y-2">
+            {messages.map((msg, idx) => (
+              <ChatMessage key={idx} message={msg.message} isUser={msg.isUser} />
+            ))}
+            {loading && <ChatMessage message="Thinking..." isUser={false} />}
+          </div>
+        </div>
         <form
           className="flex items-center space-x-2 p-4 border-t border-gray-200"
           onSubmit={(e) => {
@@ -55,21 +48,21 @@ export default function RAGChat() {
             sendMessage();
           }}
         >
-          <Input
+          <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask something..."
-            className="flex-1 rounded-full bg-white text-[#1e293b] shadow-sm"
+            className="flex-1 px-4 py-2 rounded-3xl bg-[#f8fafc] border border-gray-300 text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#8b5cf6] transition"
           />
-          <Button
+          <button
             type="submit"
-            className="bg-[#8b5cf6] text-white rounded-full px-6 py-2"
+            className="bg-[#8b5cf6] text-white px-6 py-2 rounded-3xl font-medium hover:bg-[#7c3aed] transition"
             disabled={loading}
           >
             {loading ? "..." : "Send"}
-          </Button>
+          </button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
